@@ -6,7 +6,8 @@
   <title>Sign Up</title>
   <script>
     async function signup(event) {
-      event.preventDefault(); // Prevent form reload
+      event.preventDefault();
+
       const name = document.getElementById("signupName").value;
       const email = document.getElementById("signupEmail").value;
       const password = document.getElementById("signupPassword").value;
@@ -19,9 +20,9 @@
         body: JSON.stringify({ name, email, password })
       });
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         alert('Signup successful!');
-        window.location.href = '/';  // Redirect to the main page after successful signup
+        window.location.href = '/';
       } else {
         const message = await response.text();
         alert('Error: ' + message);

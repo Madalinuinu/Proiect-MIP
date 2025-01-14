@@ -3,40 +3,50 @@ package com.car_rental.controller;
 import com.car_rental.dto.SignupRequest;
 import com.car_rental.dto.UserDto;
 import com.car_rental.services.auth.AuthService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
 
 @Controller
 public class AuthController {
 
-    private final AuthService authService;
+    @Autowired
+    private AuthService authService;
 
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
-
-    // Main Page Mapping ("/")
-    @GetMapping("/")
-    public String mainPage() {
-        return "index";  // Renders index.html
-    }
-
-    // Sign Up Page Mapping ("/signup")
     @GetMapping("/signup")
     public String signupPage() {
-        return "signup";  // Renders signup.html
+        return "signup";
     }
 
-    // Signup Handling
     @PostMapping("/signup")
-    public ResponseEntity<?> signupCustomer(@RequestBody SignupRequest signupRequest) {
-        if (authService.hasCustomerWithEmail(signupRequest.getEmail()))
-            return new ResponseEntity<>("Customer already exists with this email", HttpStatus.NOT_ACCEPTABLE);
-        UserDto createdCustomerDto = authService.createCustomer(signupRequest);
-        if (createdCustomerDto == null)
-            return new ResponseEntity<>("Customer not created, try again later", HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(createdCustomerDto, HttpStatus.CREATED);
+    public String signup(@RequestBody SignupRequest signupRequest) {
+        try {
+
+            authService.createCustomer(signupRequest);
+            return "redirect:/";
+        } catch (Exception e) {
+            return "error";
+        }
+    }
+
+
+    @GetMapping("/users")
+    public String getAllUsers(Model model) {
+        List<UserDto> users = authService.getAllUsers();
+        model.addAttribute("users", users);
+        return "users";
+    }
+
+
+    @GetMapping("/users/sorted")
+    public String getSortedUsers(Model model) {
+        List<UserDto> sortedUsers = authService.sortUsersByName();
+        model.addAttribute("users", sortedUsers);
+        return "sorted";
     }
 }

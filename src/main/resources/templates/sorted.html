@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorted Users</title>
+</head>
+<body>
+<h1>Sorted Users</h1>
+<ul>
+    <th:block th:each="user : ${users}">
+        <li>
+            <p>Name: <span th:text="${user.name}"></span></p>
+            <p>Email: <span th:text="${user.email}"></span></p>
+            <p>Role: <span th:text="${user.userRole}"></span></p>
+        </li>
+    </th:block>
+</ul>
+</body>
+</html>
