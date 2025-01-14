@@ -7,6 +7,12 @@ import com.car_rental.repository.UserRepository;
 import com.car_rental.enums.UserRole;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +36,6 @@ public class AuthServiceImpl implements AuthService {
                 .anyMatch(user -> user.getName() != null && user.getName().equalsIgnoreCase(name));
     }
 
-
     @Override
     public UserDto createCustomer(SignupRequest signupRequest) {
         User newUser = new User();
@@ -46,6 +51,13 @@ public class AuthServiceImpl implements AuthService {
         userDto.setName(newUser.getName());
         userDto.setEmail(newUser.getEmail());
         userDto.setUserRole(newUser.getUserRole());
+
+        // Salvăm utilizatorul în fișierul users.txt
+        try {
+            saveUserToFile(userDto);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return userDto;
     }
@@ -86,6 +98,32 @@ public class AuthServiceImpl implements AuthService {
 
             return name1.compareTo(name2);
         });
+        return users;
+    }
+
+    // Metoda care salvează utilizatorii într-un fișier text
+    private void saveUserToFile(UserDto userDto) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter("users.txt", true));
+        writer.write("ID: " + userDto.getId() + ", Name: " + userDto.getName() + ", Email: " + userDto.getEmail() + ", Role: " + userDto.getUserRole());
+        writer.newLine();
+        writer.close();
+    }
+
+    // Metoda care încarcă utilizatorii din fișier la repornirea aplicației (opțional)
+    public List<UserDto> loadUsersFromFile() throws IOException {
+        List<UserDto> users = new ArrayList<>();
+        BufferedReader reader = new BufferedReader(new FileReader("users.txt"));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            String[] parts = line.split(", ");
+            UserDto userDto = new UserDto();
+            userDto.setId(Long.parseLong(parts[0].split(": ")[1]));
+            userDto.setName(parts[1].split(": ")[1]);
+            userDto.setEmail(parts[2].split(": ")[1]);
+            userDto.setUserRole(UserRole.valueOf(parts[3].split(": ")[1]));
+            users.add(userDto);
+        }
+        reader.close();
         return users;
     }
 }
