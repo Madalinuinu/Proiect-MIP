@@ -20,18 +20,29 @@
         body: JSON.stringify({ name, email, password })
       });
 
-      if (response.status === 200) {
-        alert('Signup successful!');
+      const message = await response.json();
+
+      if (response.ok) {
+
+        alert(message.success);
         window.location.href = '/';
       } else {
-        const message = await response.text();
-        alert('Error: ' + message);
+
+        alert('Error: ' + message.error);
       }
     }
   </script>
+
 </head>
 <body>
 <h1>Sign Up</h1>
+
+
+<div id="successMessage" style="color: green;"></div>
+
+
+<div id="errorMessage" style="color: red;"></div>
+
 <form onsubmit="signup(event)">
   <label for="signupName">Name:</label>
   <input type="text" id="signupName" required><br><br>
@@ -41,5 +52,6 @@
   <input type="password" id="signupPassword" required><br><br>
   <button type="submit">Sign Up</button>
 </form>
+
 </body>
 </html>

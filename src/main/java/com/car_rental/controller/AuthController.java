@@ -8,9 +8,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class AuthController {
@@ -24,14 +27,24 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public String signup(@RequestBody SignupRequest signupRequest) {
-        try {
+    public ResponseEntity<Map<String, String>> signup(@RequestBody SignupRequest signupRequest) {
+        Map<String, String> response = new HashMap<>();
 
-            authService.createCustomer(signupRequest);
-            return "redirect:/";
-        } catch (Exception e) {
-            return "error";
+
+        if (authService.hasCustomerWithEmail(signupRequest.getEmail())) {
+            response.put("error", "Email already in use. Please choose a different one.");
+            return ResponseEntity.badRequest().body(response);
         }
+
+        if (authService.hasCustomerWithName(signupRequest.getName())) {
+            response.put("error", "Name already in use. Please choose a different one.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+
+        authService.createCustomer(signupRequest);
+        response.put("success", "Signup successful!");
+        return ResponseEntity.ok(response);  // Răspuns de succes
     }
 
 
@@ -41,7 +54,6 @@ public class AuthController {
         model.addAttribute("users", users);
         return "users";
     }
-
 
     @GetMapping("/users/sorted")
     public String getSortedUsers(Model model) {

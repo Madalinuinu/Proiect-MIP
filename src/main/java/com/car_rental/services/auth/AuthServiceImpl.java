@@ -19,10 +19,15 @@ public class AuthServiceImpl implements AuthService {
         this.userRepository = userRepository;
     }
 
-
     @Override
     public boolean hasCustomerWithEmail(String email) {
         return userRepository.findFirstByEmail(email).isPresent();
+    }
+
+    @Override
+    public boolean hasCustomerWithName(String name) {
+        return userRepository.findAll().stream()
+                .anyMatch(user -> user.getName() != null && user.getName().equalsIgnoreCase(name));
     }
 
 
@@ -36,7 +41,6 @@ public class AuthServiceImpl implements AuthService {
 
         userRepository.save(newUser);
 
-
         UserDto userDto = new UserDto();
         userDto.setId(newUser.getId());
         userDto.setName(newUser.getName());
@@ -45,7 +49,6 @@ public class AuthServiceImpl implements AuthService {
 
         return userDto;
     }
-
 
     @Override
     public List<UserDto> getAllUsers() {
@@ -85,5 +88,4 @@ public class AuthServiceImpl implements AuthService {
         });
         return users;
     }
-
 }
