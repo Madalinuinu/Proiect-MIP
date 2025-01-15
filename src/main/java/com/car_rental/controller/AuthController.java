@@ -44,7 +44,7 @@ public class AuthController {
 
         authService.createCustomer(signupRequest);
         response.put("success", "Signup successful!");
-        return ResponseEntity.ok(response);  // Răspuns de succes
+        return ResponseEntity.ok(response);
     }
 
 

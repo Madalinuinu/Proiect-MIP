@@ -52,7 +52,7 @@ public class AuthServiceImpl implements AuthService {
         userDto.setEmail(newUser.getEmail());
         userDto.setUserRole(newUser.getUserRole());
 
-        // Salvăm utilizatorul în fișierul users.txt
+
         try {
             saveUserToFile(userDto);
         } catch (IOException e) {
@@ -101,7 +101,7 @@ public class AuthServiceImpl implements AuthService {
         return users;
     }
 
-    // Metoda care salvează utilizatorii într-un fișier text
+
     private void saveUserToFile(UserDto userDto) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter("users.txt", true));
         writer.write("ID: " + userDto.getId() + ", Name: " + userDto.getName() + ", Email: " + userDto.getEmail() + ", Role: " + userDto.getUserRole());
@@ -109,7 +109,7 @@ public class AuthServiceImpl implements AuthService {
         writer.close();
     }
 
-    // Metoda care încarcă utilizatorii din fișier la repornirea aplicației (opțional)
+
     public List<UserDto> loadUsersFromFile() throws IOException {
         List<UserDto> users = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new FileReader("users.txt"));
